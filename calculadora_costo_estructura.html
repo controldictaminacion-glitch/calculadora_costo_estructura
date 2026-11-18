@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es" class="min-h-full bg-cdmx-fondo text-cdmx-texto">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#691C32">
+  <title>Cálculo de Costo de Estructura | Gobierno CDMX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cdmx: {
+              guinda: '#9F2241', guindaDark: '#691C32', guindaHover: '#821B35',
+              dorado: '#BC955C', doradoLight: '#D4C19C', doradoDark: '#9A7740',
+              fondo: '#F4F1EA', tarjeta: '#FFFFFF', texto: '#0F172A',
+              textoSecundario: '#475569', borde: 'rgba(188, 149, 92, 0.35)',
+              suave: '#F1F5F9', alterno: '#F8FAFC'
+            }
+          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Colores CDMX y tonos de texto y superficies definidos para la calculadora. */
+    :root {
+      --cdmx-guinda: #9F2241;
+      --cdmx-guinda-oscura: #691C32;
+      --cdmx-guinda-hover: #821B35;
+      --cdmx-dorado: #BC955C;
+      --cdmx-dorado-claro: #D4C19C;
+      --cdmx-dorado-oscuro: #9A7740;
+      --cdmx-fondo: #F4F1EA;
+      --cdmx-tarjeta: #FFFFFF;
+      --cdmx-texto: #0F172A;
+      --cdmx-texto-secundario: #475569;
+      --cdmx-borde: rgba(188, 149, 92, 0.35);
+      --cdmx-suave: #F1F5F9;
+      --cdmx-alterno: #F8FAFC;
+    }
+    html, body { background: var(--cdmx-fondo); color: var(--cdmx-texto); }
+    body { font-family: Inter, sans-serif; }
+    ::selection { background: var(--cdmx-guinda); color: var(--cdmx-tarjeta); }
+    .card-cdmx { background: var(--cdmx-tarjeta); border: 1px solid var(--cdmx-borde); box-shadow: 0 4px 20px -2px rgba(105,28,50,.05); }
+    .section-heading { border-bottom: 1px solid var(--cdmx-borde); }
+    .organization-panel, .signature-section { border-top: 3px solid var(--cdmx-dorado); }
+    input, select { background: var(--cdmx-alterno); color: var(--cdmx-texto); border-color: var(--cdmx-borde); accent-color: var(--cdmx-guinda); }
+    body input::placeholder { color: var(--cdmx-texto-secundario); opacity: 1; }
+    button, input, select { transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
+    button:disabled { opacity: .65; cursor: wait; }
+    button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--cdmx-guinda); outline-offset: 3px; }
+    header button:focus-visible { outline-color: var(--cdmx-dorado-claro); }
+    .header-action { background: transparent; color: var(--cdmx-tarjeta); border: 1px solid var(--cdmx-dorado-claro); }
+    .header-action:hover { background: var(--cdmx-guinda-hover); border-color: var(--cdmx-dorado); }
+    .header-action-primary { background: var(--cdmx-dorado); color: var(--cdmx-texto); border: 1px solid var(--cdmx-dorado); }
+    .header-action-primary:hover { background: var(--cdmx-dorado-claro); border-color: var(--cdmx-dorado-claro); }
+    .brand-label { background: var(--cdmx-dorado); color: var(--cdmx-texto); border: 1px solid var(--cdmx-dorado-claro); }
+    .summary-card { min-height: 145px; border-top: 3px solid var(--cdmx-dorado); }
+    .summary-card h3 { color: var(--cdmx-guinda-oscura); }
+    .print-grand-total { background: var(--cdmx-guinda-oscura); color: var(--cdmx-tarjeta); border: 2px solid var(--cdmx-dorado); border-top-width: 3px; }
+    .print-grand-total h3 { color: var(--cdmx-tarjeta); }
+    .total-label { display: inline-block; background: var(--cdmx-dorado); color: var(--cdmx-texto); }
+    .table-section { border-color: var(--cdmx-borde); }
+    .table-section > div:first-child { background: var(--cdmx-alterno); border-color: var(--cdmx-borde); }
+    #toggleZeroRows { color: var(--cdmx-guinda); border-color: var(--cdmx-borde); background: var(--cdmx-tarjeta); }
+    #toggleZeroRows:hover { background: var(--cdmx-guinda-hover); color: var(--cdmx-tarjeta); }
+    .table-cdmx { font-family: Inter, sans-serif; font-size: 14px; color: var(--cdmx-texto); }
+    .table-cdmx thead tr { background: var(--cdmx-guinda-oscura); color: var(--cdmx-tarjeta); border-bottom: 3px solid var(--cdmx-dorado); }
+    .table-cdmx tbody tr { background: var(--cdmx-tarjeta); border-color: var(--cdmx-borde); }
+    .table-cdmx tbody tr:nth-child(even of :not([hidden])) { background: var(--cdmx-alterno); }
+    .table-cdmx tbody tr:hover { background: var(--cdmx-suave); box-shadow: inset 3px 0 var(--cdmx-dorado); }
+    .table-cdmx th:nth-child(6), .table-cdmx td:nth-child(6), .table-cdmx th:nth-child(7), .table-cdmx td:nth-child(7) { border-left: 1px solid var(--cdmx-borde); }
+    .table-cdmx tbody td:nth-child(n+7) { color: var(--cdmx-guinda); }
+    .table-cdmx .level-badge { background: var(--cdmx-guinda); color: var(--cdmx-tarjeta); }
+    .table-cdmx .quantity-controls button { background: var(--cdmx-suave); color: var(--cdmx-guinda); border-color: var(--cdmx-borde); }
+    .table-cdmx .quantity-controls button:hover { background: var(--cdmx-guinda-hover); color: var(--cdmx-tarjeta); border-color: var(--cdmx-guinda-hover); }
+    .table-cdmx .quantity-controls input { background: var(--cdmx-tarjeta); color: var(--cdmx-texto); border-color: var(--cdmx-borde); }
+    .signature-line { border-top: 1px solid var(--cdmx-dorado-claro); }
+    footer { background: var(--cdmx-tarjeta); border-color: var(--cdmx-borde); color: var(--cdmx-texto-secundario); }
+    @media print {
+      @page { size: A4 landscape; margin: 9mm; }
+      html, body { min-height: 0 !important; height: auto !important; margin: 0 !important; padding: 0 !important; background: white !important; color: var(--cdmx-texto) !important; font: 8pt/1.25 Inter, Arial, sans-serif !important; }
+      body { display: block !important; }
+      .no-print, footer { display: none !important; }
+      header { position: static !important; margin: 0 0 3mm !important; background: white !important; color: var(--cdmx-texto) !important; border: 0 !important; border-bottom: 1.5pt solid var(--cdmx-dorado) !important; box-shadow: none !important; }
+      header > div { max-width: none !important; padding: 0 0 2mm !important; display: block !important; }
+      header h1 { color: var(--cdmx-guinda) !important; font-size: 14pt !important; }
+      header .brand-subtitle { color: var(--cdmx-texto-secundario) !important; }
+      header .brand-icon { display: none !important; }
+      main { max-width: none !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+      main.space-y-6 > section { margin: 0 0 2.5mm !important; }
+      .card-cdmx, .summary-card { background: white !important; border: .6pt solid var(--cdmx-borde) !important; border-radius: 2mm !important; box-shadow: none !important; }
+      .organization-panel { padding: 2.5mm !important; }
+      .organization-panel h2, #summary-title { font-size: 9pt !important; color: var(--cdmx-guinda) !important; }
+      input, select { color: var(--cdmx-texto) !important; background: white !important; font-size: 7.5pt !important; padding: 1mm !important; border: 0 !important; border-bottom: .5pt solid var(--cdmx-borde) !important; }
+      #organizationLoadMessage, #organizationFallbackWrap { display: none !important; }
+      #summary-title { margin: 0 0 1mm !important; }
+      #summary-description { display: none !important; }
+      .summary-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 2mm !important; }
+      .summary-card { min-height: 0 !important; height: 21mm !important; padding: 2mm !important; }
+      .summary-card h3 { font-size: 13pt !important; line-height: 1.1 !important; margin-top: 1mm !important; }
+      .summary-card p, .summary-card .summary-label, .summary-card .summary-foot { font-size: 6.5pt !important; }
+      .summary-card .summary-icon { display: none !important; }
+      .print-grand-total { background: white !important; color: var(--cdmx-texto) !important; border: 1pt solid var(--cdmx-guinda) !important; }
+      .print-grand-total h3, .print-grand-total .total-label { color: var(--cdmx-guinda) !important; }
+      .print-grand-total p { color: var(--cdmx-texto-secundario) !important; }
+      .print-grand-total .total-label { background: var(--cdmx-suave) !important; }
+      .print-grand-total #summaryNet { font-size: 15pt !important; }
+      .table-section > div:first-child { padding: 1.5mm 0 !important; background: white !important; }
+      #table-title { font-size: 10pt !important; color: var(--cdmx-guinda) !important; }
+      .overflow-x-auto { overflow: visible !important; }
+      .table-cdmx { width: 100% !important; table-layout: fixed !important; border-collapse: collapse !important; font-size: 7.5pt !important; }
+      .table-cdmx thead { display: table-header-group !important; }
+      .table-cdmx th, .table-cdmx td { padding: 1.4mm 1mm !important; line-height: 1.15 !important; border-bottom: .5pt solid var(--cdmx-borde) !important; color: var(--cdmx-texto) !important; overflow-wrap: anywhere !important; }
+      .table-cdmx thead tr { background: var(--cdmx-suave) !important; border-bottom: 1.5pt solid var(--cdmx-dorado) !important; }
+      .table-cdmx th { font-size: 7pt !important; color: var(--cdmx-guinda) !important; }
+      .table-cdmx tbody td:nth-child(n+7) { color: var(--cdmx-guinda) !important; }
+      .table-cdmx th:nth-child(1) { width: 5%; }
+      .table-cdmx th:nth-child(2) { width: 23%; }
+      .table-cdmx th:nth-child(3) { width: 10%; }
+      .table-cdmx th:nth-child(4) { width: 10%; }
+      .table-cdmx th:nth-child(5) { width: 11%; }
+      .table-cdmx th:nth-child(6) { width: 7%; }
+      .table-cdmx th:nth-child(7) { width: 12%; }
+      .table-cdmx th:nth-child(8) { width: 11%; }
+      .table-cdmx th:nth-child(9) { width: 11%; }
+      .table-cdmx tbody tr { break-inside: avoid !important; page-break-inside: avoid !important; }
+      .quantity-controls button, .quantity-controls input { display: none !important; }
+      .quantity-print-value { display: inline !important; font-weight: 700 !important; }
+      .table-cdmx .level-badge { background: white !important; color: var(--cdmx-guinda) !important; border: .5pt solid var(--cdmx-borde) !important; box-shadow: none !important; }
+      .signature-section { break-inside: avoid !important; page-break-inside: avoid !important; padding: 2.5mm !important; margin-top: 3mm !important; }
+      .signature-section h2 { font-size: 9pt !important; margin-bottom: 1.5mm !important; }
+      .signature-input { min-height: 6mm !important; border: 0 !important; border-bottom: .6pt solid var(--cdmx-dorado) !important; background: transparent !important; }
+      .signature-line { border-top: .6pt solid var(--cdmx-dorado); }
+      .signature-section .pt-8 { padding-top: 5mm !important; }
+      .print-meta { display: block !important; font-size: 7pt !important; margin-top: 2mm !important; }
+      .empty-table-message { display: none !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen text-cdmx-texto selection:bg-cdmx-guinda selection:text-white">
+<header class="sticky top-0 z-40 bg-cdmx-guindaDark text-white shadow-md border-b-4 border-cdmx-dorado">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-4"><div class="brand-icon h-12 w-12 rounded-xl bg-white text-cdmx-guinda flex items-center justify-center shadow-lg text-2xl border border-cdmx-doradoLight"><i class="fa-solid fa-landmark-flag" aria-hidden="true"></i></div><div><div class="flex items-center gap-2"><span class="brand-label text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded">DGDYPO</span><span class="brand-subtitle text-xs text-cdmx-doradoLight">| Costo de estructura</span></div><h1 class="text-xl sm:text-2xl font-black">Cálculo de Costo de Estructura</h1></div></div>
+    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end no-print"><button onclick="clearAllQuantities()" type="button" class="header-action px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-eraser"></i> Reiniciar</button><button id="downloadExcelButton" onclick="downloadExcel()" type="button" class="header-action px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-file-excel"></i> Descargar Excel</button><button id="downloadPDFButton" onclick="downloadPDF()" type="button" class="header-action-primary px-3 py-2 rounded-lg text-xs font-bold"><i class="fa-solid fa-file-pdf"></i> Descargar PDF</button></div>
+  </div>
+</header>
+<main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+  <p id="exportStatus" class="no-print text-sm text-cdmx-guinda" role="status" aria-live="polite" hidden></p>
+  <section class="organization-panel card-cdmx rounded-2xl p-5 space-y-4" aria-labelledby="organization-title"><div class="section-heading pb-3"><h2 id="organization-title" class="text-sm font-bold uppercase tracking-wider text-cdmx-guinda"><i class="fa-solid fa-building text-cdmx-doradoDark"></i> Organismo</h2><p class="text-sm text-cdmx-textoSecundario mt-1">Seleccione el organismo de la pestaña “Main Conforme a Ley Orgánica”.</p></div><div><label for="organization" class="block text-sm font-bold mb-1">Organismo</label><select id="organization" class="w-full bg-cdmx-alterno border border-cdmx-borde rounded-xl px-3.5 py-2.5 text-sm"><option value="">Cargando organismos…</option></select><p id="organizationLoadMessage" class="text-xs text-cdmx-textoSecundario mt-1">Fuente: columna B desde B2.</p><div id="organizationFallbackWrap" class="hidden mt-2"><label for="organizationFallback" class="text-xs font-semibold">No se pudo cargar la lista. Escriba el organismo:</label><input id="organizationFallback" class="w-full bg-cdmx-alterno text-cdmx-texto border border-cdmx-borde rounded-xl p-2 uppercase" oninput="this.value=this.value.toLocaleUpperCase('es-MX')"></div></div></section>
+  <section aria-labelledby="summary-title" class="space-y-3"><div class="px-1"><h2 id="summary-title" class="text-sm font-bold uppercase tracking-wider text-cdmx-guinda">Resumen de costo de estructura</h2><p id="summary-description" class="text-sm text-cdmx-textoSecundario mt-1">Costos calculados según la cantidad de plazas por nivel.</p></div><div class="summary-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+    <article class="card-cdmx summary-card rounded-2xl p-5 flex flex-col justify-between"><span class="summary-label text-sm font-bold text-cdmx-textoSecundario uppercase">Total de plazas</span><div class="mt-3"><h3 id="summaryTotalPositions" class="text-3xl font-black font-mono">0</h3><p class="text-sm text-cdmx-textoSecundario mt-1">Plazas consideradas</p></div></article>
+    <article class="card-cdmx summary-card rounded-2xl p-5 flex flex-col justify-between"><span class="summary-label text-sm font-bold text-cdmx-textoSecundario uppercase">Costo anual total</span><div class="mt-3"><h3 id="summaryAnnual" class="text-2xl sm:text-3xl font-extrabold text-cdmx-guinda font-mono">$0.00</h3><p class="text-sm text-cdmx-textoSecundario mt-1">Costo anual de la estructura</p></div></article>
+    <article class="card-cdmx summary-card rounded-2xl p-5 flex flex-col justify-between"><span class="summary-label text-sm font-bold text-cdmx-textoSecundario uppercase">Mensual bruto total</span><div class="mt-3"><h3 id="summaryGross" class="text-2xl sm:text-3xl font-extrabold text-cdmx-guinda font-mono">$0.00</h3><p class="text-sm text-cdmx-textoSecundario mt-1">Costo mensual bruto</p></div></article>
+    <article class="print-grand-total summary-card rounded-2xl p-5 text-white flex flex-col justify-between border-2 border-cdmx-dorado"><div><span class="total-label text-xs font-extrabold uppercase px-2 py-1 rounded">Mensual neto aproximado</span><div class="mt-3"><h3 id="summaryNet" class="text-3xl font-black font-mono">$0.00</h3><p class="text-sm text-cdmx-doradoLight mt-1">Estimación neta total</p></div></div></article>
+  </div></section>
+  <section class="table-section card-cdmx rounded-2xl overflow-hidden" aria-labelledby="table-title"><div class="p-4 sm:p-5 bg-cdmx-alterno border-b border-cdmx-borde flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"><div><h2 id="table-title" class="text-base font-bold text-cdmx-guinda"><i class="fa-solid fa-table-cells text-cdmx-doradoDark"></i> Tabulador de niveles y costos</h2><p class="text-sm text-cdmx-textoSecundario mt-1">Ingrese la cantidad de plazas por nivel. La tabla oculta niveles sin plazas por defecto.</p></div><button id="toggleZeroRows" onclick="toggleZeroRowsVisibility()" type="button" class="no-print text-sm font-semibold text-cdmx-guinda border border-cdmx-borde rounded-lg px-3 py-2"><i class="fa-solid fa-eye"></i> Mostrar niveles en cero</button></div><p id="emptyTableMessage" class="empty-table-message px-4 py-5 text-sm text-cdmx-textoSecundario text-center">Aún no hay plazas capturadas. Muestre los niveles en cero para comenzar.</p><div class="overflow-x-auto"><table class="table-cdmx w-full text-left border-collapse"><thead><tr class="bg-cdmx-guinda text-white font-bold uppercase tracking-wide"><th class="py-3 px-3 text-center">Nivel</th><th class="py-3 px-3 text-left">Denominación general</th><th class="py-3 px-3 text-right">Costo anual</th><th class="py-3 px-3 text-right">Costo mensual bruto</th><th class="py-3 px-3 text-right">Costo mensual neto aproximado</th><th class="py-3 px-3 text-center">Cantidad de plazas</th><th class="py-3 px-3 text-right">Subtotal anual</th><th class="py-3 px-3 text-right">Subtotal mensual bruto</th><th class="py-3 px-3 text-right">Subtotal mensual neto</th></tr></thead><tbody id="calculatorTableBody" class="divide-y divide-cdmx-borde bg-white"></tbody></table></div></section>
+  <section class="signature-section card-cdmx rounded-2xl p-5" aria-labelledby="validation-title"><div class="flex flex-col sm:flex-row sm:items-end justify-between gap-5"><div class="w-full sm:max-w-xl"><h2 id="validation-title" class="text-sm font-bold uppercase text-cdmx-guinda mb-3">Validó por</h2><label for="validatedBy" class="block text-sm font-semibold mb-1">Nombre de la persona que valida</label><input id="validatedBy" type="text" autocomplete="name" class="signature-input w-full bg-cdmx-alterno border border-cdmx-borde rounded-lg px-3 py-2 text-base" placeholder="Escriba el nombre completo"></div><div class="w-full sm:w-72 pt-8"><div class="signature-line"></div><p class="text-center text-xs text-cdmx-textoSecundario mt-2">Firma</p></div></div><div class="print-meta hidden mt-4 text-sm" id="printTimestampWrap">Fecha y hora de elaboración del reporte: <time id="printTimestamp"></time></div></section>
+</main>
+<footer class="mt-auto border-t border-cdmx-borde py-4 text-center text-xs text-cdmx-textoSecundario no-print">DGDYPO · Cálculo de Costo de Estructura</footer>
+<script src="report-data.js"></script>
+<script src="report-pdf.js?v=palette-cdmx-2"></script>
+<script src="report-excel.js?v=palette-cdmx-2"></script>
+<script src="report-downloads.js"></script>
+<script>
+const levelsData = [
+  {level:'49', designation:'Jefe de Gobierno', annual:1696268.40, gross:115069, net:81200},
+  {level:'48', designation:'Secretario', annual:1649667.45, gross:113830, net:79920},
+  {level:'47', designation:'Subsecretario/Coordinador General/Alcalde', annual:1560079.75, gross:108406, net:78636},
+  {level:'46', designation:'Coordinador General "A"', annual:1486886.55, gross:103466, net:73757},
+  {level:'45', designation:'Director General "B"', annual:1417182.45, gross:98663, net:72235},
+  {level:'44', designation:'Director General "A"', annual:1224426.65, gross:84883, net:70665},
+  {level:'43', designation:'Director Ejecutivo "B"', annual:1112570.25, gross:77089, net:58847},
+  {level:'42', designation:'Director Ejecutivo "A"', annual:1005613.65, gross:69541, net:51500},
+  {level:'40', designation:'Director "B"', annual:892646.10, gross:61776, net:47314},
+  {level:'39', designation:'Director "A"', annual:787362.40, gross:54265, net:39939},
+  {level:'34', designation:'Coordinador "B"', annual:702298.65, gross:48206, net:36879},
+  {level:'32', designation:'Subdirector "B"/ Coordinador "A"', annual:618457.90, gross:42228, net:32658},
+  {level:'29', designation:'Subdirector "A"/Concejal de Alcaldía', annual:537882.00, gross:36482, net:29534},
+  {level:'27', designation:'Jefe de Unidad Departamental "B"', annual:461099.35, gross:31003, net:24500},
+  {level:'25', designation:'Jefe de Unidad Departamental "A"', annual:384511.05, gross:25536, net:21036},
+  {level:'24', designation:'Líder Coordinador de Proyectos "B"', annual:346902.25, gross:22876, net:18900},
+  {level:'23', designation:'Líder Coordinador de Proyectos "A"', annual:309248.30, gross:20211, net:16576},
+  {level:'21', designation:'Enlace "B"', annual:271016.60, gross:17504, net:14337},
+  {level:'20', designation:'Enlace "A"', annual:233764.40, gross:14863, net:12615}
+];
+const ORGANIZATION_CSV_URL='https://docs.google.com/spreadsheets/d/1sZgKsIrtCJ4b0aZGhpY9jLtII9YccTkdnkJ3tqQurLQ/gviz/tq?tqx=out:csv&gid=2084200037&range=B2:B';
+let quantities=new Array(levelsData.length).fill(0), showZeroRows=false;
+function formatMXN(value){return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',minimumFractionDigits:2,maximumFractionDigits:2}).format(value||0)}
+window.onload=()=>{renderTableRows();loadOrganizations()};
+async function loadOrganizations(){const select=document.getElementById('organization');try{const response=await fetch(ORGANIZATION_CSV_URL,{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);const values=parseCSVColumn(await response.text()).map(value=>value.trim()).filter(Boolean);const unique=[...new Set(values)];if(!unique.length)throw new Error('No hay organismos en B2:B');select.innerHTML='<option value="">Seleccione un organismo</option>';unique.forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.appendChild(option)});document.getElementById('organizationLoadMessage').textContent=`${unique.length} organismos cargados de Main Conforme a Ley Orgánica.`}catch(error){select.innerHTML='<option value="">Lista no disponible</option>';document.getElementById('organizationFallbackWrap').classList.remove('hidden');document.getElementById('organizationLoadMessage').textContent='No se pudo acceder a la hoja; verifique que permita lectura pública.';console.error(error)}}
+function parseCSVColumn(text){const rows=[];let row=[],field='',quoted=false;for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'&&quoted&&text[i+1]==='"'){field+='"';i++}else if(c==='"')quoted=!quoted;else if(c===','&&!quoted){row.push(field);field=''}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(field);rows.push(row);row=[];field=''}else field+=c}if(field||row.length){row.push(field);rows.push(row)}return rows.map(fields=>fields[0]||'')}
+function getOrganizationValue(){return document.getElementById('organizationFallback').value.trim()||document.getElementById('organization').value}
+function renderTableRows(){const body=document.getElementById('calculatorTableBody');body.innerHTML='';levelsData.forEach((item,index)=>{const row=document.createElement('tr');row.dataset.index=index;row.innerHTML=`<td class="py-3 px-2 text-center"><span class="level-badge inline-block px-2 py-1 rounded-md bg-cdmx-guinda text-white font-mono font-bold">${item.level}</span></td><td class="py-3 px-2 text-left">${item.designation}</td><td class="py-3 px-2 text-right font-mono">${formatMXN(item.annual)}</td><td class="py-3 px-2 text-right font-mono">${formatMXN(item.gross)}</td><td class="py-3 px-2 text-right font-mono">${formatMXN(item.net)}</td><td class="py-3 px-2 text-center"><div class="quantity-controls flex items-center justify-center gap-1"><button onclick="stepQuantity(${index},-1)" type="button" aria-label="Restar plaza" class="w-8 h-8 rounded bg-cdmx-suave border border-cdmx-borde">−</button><input id="qty-${index}" type="number" min="0" value="" placeholder="0" aria-label="Cantidad de plazas nivel ${item.level}" class="w-14 text-center bg-cdmx-alterno border rounded py-1 font-mono font-bold" oninput="onQuantityInput(${index},this.value)"><button onclick="stepQuantity(${index},1)" type="button" aria-label="Agregar plaza" class="w-8 h-8 rounded bg-cdmx-suave border border-cdmx-borde">+</button></div><span class="quantity-print-value hidden">0</span></td><td class="py-3 px-2 text-right font-mono" id="annualSubtotal-${index}">${formatMXN(0)}</td><td class="py-3 px-2 text-right font-mono" id="grossSubtotal-${index}">${formatMXN(0)}</td><td class="py-3 px-2 text-right font-mono font-bold" id="netSubtotal-${index}">${formatMXN(0)}</td>`;body.appendChild(row)});updateTotals()}
+function toggleZeroRowsVisibility(){showZeroRows=!showZeroRows;document.getElementById('toggleZeroRows').innerHTML=showZeroRows?'<i class="fa-solid fa-eye-slash"></i> Ocultar niveles en cero':'<i class="fa-solid fa-eye"></i> Mostrar niveles en cero';updateTotals()}
+function onQuantityInput(index,value){const parsed=parseInt(value,10);quantities[index]=isNaN(parsed)||parsed<0?0:parsed;updateTotals()}
+function stepQuantity(index,step){quantities[index]=Math.max(0,(quantities[index]||0)+step);const input=document.getElementById(`qty-${index}`);if(input)input.value=quantities[index]||'';updateTotals()}
+function clearAllQuantities(){quantities.fill(0);levelsData.forEach((_,index)=>{const input=document.getElementById(`qty-${index}`);if(input)input.value=''});updateTotals()}
+function updateTotals(){let annual=0,gross=0,net=0,totalPositions=0,visible=0;levelsData.forEach((item,index)=>{const qty=quantities[index]||0;const annualSubtotal=item.annual*qty,grossSubtotal=item.gross*qty,netSubtotal=item.net*qty;const row=document.querySelector(`tr[data-index="${index}"]`);if(row)row.hidden=!showZeroRows&&qty===0;if(qty>0)visible++;document.getElementById(`annualSubtotal-${index}`).textContent=formatMXN(annualSubtotal);document.getElementById(`grossSubtotal-${index}`).textContent=formatMXN(grossSubtotal);document.getElementById(`netSubtotal-${index}`).textContent=formatMXN(netSubtotal);document.querySelector(`#qty-${index}`).closest('td').querySelector('.quantity-print-value').textContent=qty;annual+=annualSubtotal;gross+=grossSubtotal;net+=netSubtotal;totalPositions+=qty});document.getElementById('summaryTotalPositions').textContent=totalPositions;document.getElementById('summaryAnnual').textContent=formatMXN(annual);document.getElementById('summaryGross').textContent=formatMXN(gross);document.getElementById('summaryNet').textContent=formatMXN(net);document.getElementById('emptyTableMessage').hidden=showZeroRows||visible>0}
+function setPrintTimestamp(){const now=new Date(),time=document.getElementById('printTimestamp');time.textContent=new Intl.DateTimeFormat('es-MX',{dateStyle:'long',timeStyle:'short',timeZone:'America/Mexico_City'}).format(now);time.dateTime=now.toISOString();document.getElementById('printTimestampWrap').classList.remove('hidden')}
+function getExportReport(){return StructureReport.createReport({levels:levelsData,quantities,organization:getOrganizationValue(),validatedBy:document.getElementById('validatedBy').value})}
+function downloadPDF(){return StructureDownloads.download('pdf',getExportReport())}
+function downloadExcel(){return StructureDownloads.download('excel',getExportReport())}
+window.addEventListener('beforeprint',setPrintTimestamp);
+</script>
+</body>
+</html>
